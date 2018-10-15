@@ -24,6 +24,7 @@ img9 = 0000000000000000000000000000
 pos1 = 110000000000000
 pos2 = 110000000000000
 verti = 4
+multiplier = 0.5
 
 output_array = [img0,img1,img2,img3,img4,img5,img6,img7,img8,img9]
 copy_array = None
@@ -158,21 +159,24 @@ def render(bullet_list, dead=False):
         copy_array[verti + 1] += pos2
 
         for i in range(len(bullet_list)):
-            tag, val, dx, sign, pos = bullet_list[i]
+            tag, val, dx, sign, pos, stack = bullet_list[i]
             if pos < 0 or pos > 9 or val > 10 ** (L-1) or val < 0:
                 continue
-            copy_array[pos] += val
+            copy_array[int(pos)] += val
             if tag == 'h':
+                stack += dx * multiplier
+                pw = int(stack)
+                bullet_list[i][-1] = stack - pw
                 if sign > 0:
-                    bullet_list[i][1] //= dx
+                    bullet_list[i][1] //= (10 ** pw)
                 else:
-                    bullet_list[i][1] *= dx
+                    bullet_list[i][1] *= (10 ** pw)
 
             else:
                 if sign > 0:
-                    bullet_list[i][4] += 1
+                    bullet_list[i][4] += dx * multiplier
                 else:
-                    bullet_list[i][4] -= 1
+                    bullet_list[i][4] -= dx * multiplier
 
     for line in copy_array:
         print('{0:028d}'.format(line))
@@ -183,9 +187,10 @@ def create_bullet():
     if random.random() > 0.5:
         # Horizontal Bullet
         tag = 'h'
-        dx = random.choice([10,100,1000])
+        dx = random.choice([1,2,3])
         sign = random.choice([1,-1])
         pos = random.choice(range(10))
+        stack = 0
         if sign > 0:
             val = 10 ** (L-1)
         else:
@@ -194,19 +199,20 @@ def create_bullet():
     else:
         # Horizontal Bullet
         tag = 'v'
-        dx = 10
+        dx = random.choice([0.25,0.5,0.75])
         sign = random.choice([1,-1])
         vert = random.choice(range(28))
         val = 10 ** vert
+        stack = 0
         if sign > 0:
             pos = 0
         else:
             pos = 9
 
-    return [tag, val, dx, sign, pos]
+    return [tag, val, dx, sign, pos, stack]
 
 def check_dead():
-    # Detect 2 in player position
+    # Detect number 2 in player position
     for i, player_line in enumerate([pos1, pos2]):
         counter = 0
         while player_line > 0:
@@ -232,8 +238,8 @@ def init():
     img7 = 0000000000000000000000000000
     img8 = 0000000000000000000000000000
     img9 = 0000000000000000000000000000
-    pos1 = 110000000000000
-    pos2 = 110000000000000
+    pos1 = 1100000000000000
+    pos2 = 1100000000000000
     verti = 4
 
     output_array = [img0,img1,img2,img3,img4,img5,img6,img7,img8,img9]
@@ -270,7 +276,7 @@ with Listener(on_press=on_press, on_release=on_release) as listener:
             render(bullet_list)
             dead = check_dead()
 
-        time.sleep(0.1)
+        time.sleep(multiplier * 0.1)
         clear()
         t += 1
     
