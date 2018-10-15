@@ -44,30 +44,85 @@ output_array = [img0,img1,img2,img3,img4,img5,img6,img7,img8,img9]
 copy_array = None
 
 t = 0
+
+pressed_key = {
+    'w': False,
+    's': False,
+    'a': False,
+    'd': False,
+    Key.alt: False,
+    Key.alt_r: False,
+    Key.cmd: False,
+    Key.cmd_r: False
+}
+
 def on_press(key):
-    global verti, pos1, pos2
+    global verti, pos1, pos2, pressed_key
 
-    if key == Key.alt:
-        verti = max(verti - 1, 0)
-        print(verti)
-        print('hello')
-    elif key == Key.cmd:
-        verti = min(8, verti + 1)
 
-    elif key == Key.alt_r:
-        pos1 = max(11, pos1//10)
-        pos2 = max(11, pos2//10)
+    try:
+        if key.char == 'w':
+            pressed_key['w'] = True
 
-    elif key == Key.cmd_r:
-        pos1 = min(1100000000000000000000000000, pos1 * 10)
-        pos2 = min(1100000000000000000000000000, pos2 * 10)
+            verti = max(verti - 1, 0)
 
+        elif key.char == 's':
+            pressed_key['s'] = True
+
+            verti = min(8, verti + 1)
+
+        elif key.char == 'd':
+            pressed_key['d'] = True
+
+            pos1 = max(11, pos1//10)
+            pos2 = max(11, pos2//10)
+
+        elif key.char == 'a':
+            pressed_key['a'] = True
+
+            pos1 = min(1100000000000000000000000000, pos1 * 10)
+            pos2 = min(1100000000000000000000000000, pos2 * 10)
+    
+    except KeyboardInterrupt:
+        exit()
+    except:
+
+        if key == Key.alt:
+            pressed_key[Key.alt] = True
+
+            verti = max(verti - 1, 0)
+
+        elif key == Key.cmd:
+            pressed_key[Key.cmd] = True
+
+            verti = min(8, verti + 1)
+
+        elif key == Key.alt_r:
+            pressed_key[Key.alt_r] = True
+
+            pos1 = max(11, pos1//10)
+            pos2 = max(11, pos2//10)
+
+        elif key == Key.cmd_r:
+            pressed_key[Key.cmd_r] = True
+
+            pos1 = min(1100000000000000000000000000, pos1 * 10)
+            pos2 = min(1100000000000000000000000000, pos2 * 10)
 
 def on_release(key):
-    print('{0} release'.format(key))
-    if key == Key.esc:
-        # Stop listener
-        return False
+    global pressed_key
+    #print('{0} release'.format(key))
+    try:
+        if key.char in ['w','s','a','d']:
+            pressed_key[key.char] = False    
+    
+    except KeyboardInterrupt:
+        exit()
+        
+    except:
+        if key in [Key.alt, Key.cmd,Key.alt_r, Key.cmd_r]:
+            pressed_key[key] = False
+            
 
 def render(bullet_list, dead=False):
     global copy_array
@@ -104,7 +159,7 @@ def create_bullet():
     if random.random() > 0.5:
         # Horizontal Bullet
         tag = 'h'
-        dx = random.choice([10,100])
+        dx = random.choice([10,100,1000])
         sign = random.choice([1,-1])
         pos = random.choice(range(10))
         if sign > 0:
@@ -146,15 +201,19 @@ array_copy = False
 with Listener(on_press=on_press, on_release=on_release) as listener:
 
     while t < 1000:
+
+        #calculate_pos()
         if dead:
             if not array_copy:
+                score = t // 10
                 copy_array = die()
                 array_copy = True
             render(bullet_list, dead)
+            print('Your Score: ', score)
 
         else:
-            
-            if t % 5 == 0:
+            print('Score: ',t // 10)
+            if t % 3 == 0:
                 bullet_list.append(create_bullet())
             render(bullet_list)
             dead = check_dead()
@@ -162,7 +221,7 @@ with Listener(on_press=on_press, on_release=on_release) as listener:
         time.sleep(0.1)
         clear()
         t += 1
-        print(verti)
+        
 
 
 
