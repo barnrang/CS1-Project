@@ -2,27 +2,12 @@
 # Output: Dodge the Bullet
 import time
 import os
+import sys
 import random
 from pynput.keyboard import Key, Controller, Listener
 clear = lambda : os.system('clear')
 
-def die():
-    img0 = 11111000011111110001111110000
-    img1 = 11001100011111110001111110000
-    img2 = 11000110000111000001100000000
-    img3 = 11000110000111000001100000000
-    img4 = 11000110000111000001111110000
-    img5 = 11000110000111000001111110000
-    img6 = 11000110000111000001100000000
-    img7 = 11000110000111000001100000000
-    img8 = 11001100011111110001111110000
-    img9 = 11111000011111110001111110000
-    output_array = [img0,img1,img2,img3,img4,img5,img6,img7,img8,img9]
-    return output_array
-
-def set_zero():
-    return [0 for _ in range(10)]
-
+# Global Variable
 
 L = 28
 
@@ -36,8 +21,8 @@ img6 = 0000000000000000000000000000
 img7 = 0000000000000000000000000000
 img8 = 0000000000000000000000000000
 img9 = 0000000000000000000000000000
-pos1 = 11000000000000000
-pos2 = 11000000000000000
+pos1 = 110000000000000
+pos2 = 110000000000000
 verti = 4
 
 output_array = [img0,img1,img2,img3,img4,img5,img6,img7,img8,img9]
@@ -56,9 +41,40 @@ pressed_key = {
     Key.cmd_r: False
 }
 
+bullet_list = []
+dead = False
+array_copy = False
+break_loop = False
+
+
+def die():
+    img0 = 1111100001111111000111111000
+    img1 = 1100110001111111000111111000
+    img2 = 1100011000011100000110000000
+    img3 = 1100011000011100000110000000
+    img4 = 1100011000011100000111111000
+    img5 = 1100011000011100000111111000
+    img6 = 1100011000011100000110000000
+    img7 = 1100011000011100000110000000
+    img8 = 1100110001111111000111111000
+    img9 = 1111100001111111000111111000
+    output_array = [img0,img1,img2,img3,img4,img5,img6,img7,img8,img9]
+    return output_array
+
+def swap(output_array):
+    inv = 1111111111111111111111111111
+    for i in range(10):
+        
+        output_array[i] = inv - output_array[i]
+        #print(output_array[i])
+        #time.sleep(0.5)
+
+def set_zero():
+    return [0 for _ in range(10)]
+
 def on_press(key):
     global verti, pos1, pos2, pressed_key
-
+    #print('{0} pressed'.format(key))
 
     try:
         if key.char == 'w':
@@ -82,9 +98,7 @@ def on_press(key):
 
             pos1 = min(1100000000000000000000000000, pos1 * 10)
             pos2 = min(1100000000000000000000000000, pos2 * 10)
-    
-    except KeyboardInterrupt:
-        exit()
+
     except:
 
         if key == Key.alt:
@@ -109,19 +123,24 @@ def on_press(key):
             pos1 = min(1100000000000000000000000000, pos1 * 10)
             pos2 = min(1100000000000000000000000000, pos2 * 10)
 
+        elif key == Key.shift_r:
+            init()
+
 def on_release(key):
-    global pressed_key
-    #print('{0} release'.format(key))
+    global pressed_key, break_loop
+
     try:
         if key.char in ['w','s','a','d']:
             pressed_key[key.char] = False    
-    
-    except KeyboardInterrupt:
-        exit()
-        
+
     except:
         if key in [Key.alt, Key.cmd,Key.alt_r, Key.cmd_r]:
             pressed_key[key] = False
+        
+        elif key == Key.shift:
+            print('pressed shift')
+            break_loop = True
+            return False
             
 
 def render(bullet_list, dead=False):
@@ -129,6 +148,9 @@ def render(bullet_list, dead=False):
 
     if dead:
         copy_array = [(x % 10) * 10  ** (L-1) + (x // 10) for x in copy_array]
+        #if random.random() > 0.5:
+        #print(copy_array)
+        #swap(copy_array)
 
     else:
         copy_array = [x for x in output_array]
@@ -154,6 +176,8 @@ def render(bullet_list, dead=False):
 
     for line in copy_array:
         print('{0:028d}'.format(line))
+    
+    print('press left shift to exit, press right shift to restart')
 
 def create_bullet():
     if random.random() > 0.5:
@@ -163,7 +187,7 @@ def create_bullet():
         sign = random.choice([1,-1])
         pos = random.choice(range(10))
         if sign > 0:
-            val = 1000000000000000000000000000
+            val = 10 ** (L-1)
         else:
             val = 1
 
@@ -195,19 +219,47 @@ def check_dead():
 
     return False
 
-bullet_list = []
-dead = False
-array_copy = False
+def init():
+    global output_array, copy_array, t, pos1, pos2, \
+        bullet_list, dead, array_copy, break_loop, verti
+    img0 = 0000000000000000000000000000
+    img1 = 0000000000000000000000000000
+    img2 = 0000000000000000000000000000
+    img3 = 0000000000000000000000000000
+    img4 = 0000000000000000000000000000
+    img5 = 0000000000000000000000000000
+    img6 = 0000000000000000000000000000
+    img7 = 0000000000000000000000000000
+    img8 = 0000000000000000000000000000
+    img9 = 0000000000000000000000000000
+    pos1 = 110000000000000
+    pos2 = 110000000000000
+    verti = 4
+
+    output_array = [img0,img1,img2,img3,img4,img5,img6,img7,img8,img9]
+    copy_array = None
+
+    t = 0
+
+    bullet_list = []
+    dead = False
+    array_copy = False
+    break_loop = False
+
 with Listener(on_press=on_press, on_release=on_release) as listener:
 
-    while t < 1000:
+    while True:
 
-        #calculate_pos()
+        if break_loop:
+            break
+
         if dead:
             if not array_copy:
                 score = t // 10
-                copy_array = die()
+                copy_array = die()         
                 array_copy = True
+            if (t % 10) == 0:
+                swap(copy_array)
             render(bullet_list, dead)
             print('Your Score: ', score)
 
@@ -221,8 +273,5 @@ with Listener(on_press=on_press, on_release=on_release) as listener:
         time.sleep(0.1)
         clear()
         t += 1
-        
-
-
-
+    
     listener.join()
