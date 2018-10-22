@@ -30,7 +30,7 @@ img9 = 0000000000000000000000000000
 pos1 = 330000000000000
 pos2 = 330000000000000
 verti = 4
-multiplier = 1/3
+multiplier = 10/23
 
 output_array = [img0,img1,img2,img3,img4,img5,img6,img7,img8,img9]
 copy_array = None
@@ -193,7 +193,7 @@ def create_bullet():
     if random.random() > 0.5:
         # Horizontal Bullet
         tag = 'h'
-        dx = random.choice([1,2,3])
+        dx = random.choice([1,2])
         sign = random.choice([1,-1])
         pos = random.choice(range(10))
         stack = 0
@@ -277,7 +277,7 @@ with Listener(on_press=on_press, on_release=on_release) as listener:
 
         else:
             print('Score: ',t // 10)
-            if t % 3 == 0:
+            if t % 7 == 0:
                 bullet_list.append(create_bullet())
             render(bullet_list)
             dead = check_dead()
