@@ -212,14 +212,14 @@ def on_press(key):
         elif pressed_button == 'd':
             pressed_key['d'] = True
 
-            pos1 = max(11, pos1 // 10)
-            pos2 = max(11, pos2 // 10)
+            pos1 = max(33, pos1 // 10)
+            pos2 = max(33, pos2 // 10)
 
         elif pressed_button == 'a':
             pressed_key['a'] = True
 
-            pos1 = min(1100000000000000000000000000, pos1 * 10)
-            pos2 = min(1100000000000000000000000000, pos2 * 10)
+            pos1 = min(3300000000000000000000000000, pos1 * 10)
+            pos2 = min(3300000000000000000000000000, pos2 * 10)
 
     except:
 
@@ -236,14 +236,14 @@ def on_press(key):
         elif key == Key.alt_r:
             pressed_key[Key.alt_r] = True
 
-            pos1 = max(11, pos1 // 10)
-            pos2 = max(11, pos2 // 10)
+            pos1 = max(33, pos1 // 10)
+            pos2 = max(33, pos2 // 10)
 
         elif key == Key.cmd_r:
             pressed_key[Key.cmd_r] = True
 
-            pos1 = min(1100000000000000000000000000, pos1 * 10)
-            pos2 = min(1100000000000000000000000000, pos2 * 10)
+            pos1 = min(3300000000000000000000000000, pos1 * 10)
+            pos2 = min(3300000000000000000000000000, pos2 * 10)
 
         elif key == Key.shift_r:
             restart = True
