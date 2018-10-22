@@ -4,8 +4,14 @@ import time
 import os
 import sys
 import random
+import platform
+
 from pynput.keyboard import Key, Controller, Listener
-clear = lambda : os.system('clear')
+
+if platform.system() == 'Windows':
+    clear = lambda : os.system('cls')
+elif platform.system() == 'Darwin':
+    clear = lambda : os.system('clear')
 
 # Global Variable
 
@@ -21,8 +27,8 @@ img6 = 0000000000000000000000000000
 img7 = 0000000000000000000000000000
 img8 = 0000000000000000000000000000
 img9 = 0000000000000000000000000000
-pos1 = 110000000000000
-pos2 = 110000000000000
+pos1 = 330000000000000
+pos2 = 330000000000000
 verti = 4
 multiplier = 10/23
 
@@ -62,10 +68,55 @@ def die():
     output_array = [img0,img1,img2,img3,img4,img5,img6,img7,img8,img9]
     return output_array
 
+def intro1():
+    img0 = 1000000000111110000000000000
+    img1 = 1000000001111110000000000000
+    img2 = 1000000000001110000000000000
+    img3 = 1000000000001110000000000000
+    img4 = 1000000000001110000000000000
+    img5 = 1000000000001110000000000000
+    img6 = 1000000000001110000000000000
+    img7 = 1000000000001110000000000000
+    img8 = 1000000000001110000000000000
+    img9 = 1000000000111111100000000000
+    output_array = [img0,img1,img2,img3,img4,img5,img6,img7,img8,img9]
+    return output_array
+
+def intro2():
+    img0 = 1000000000111110000000000000
+    img1 = 1000000001111111000000000000
+    img2 = 1000000011100011100000000000
+    img3 = 1000000111000001110000000000
+    img4 = 1000000000000011100000000000
+    img5 = 1000000000000111000000000000
+    img6 = 1000000000001110000000000000
+    img7 = 1000000000011100000000000000
+    img8 = 1000000000111111100000000000
+    img9 = 1000000001111111100000000000
+    output_array = [img0,img1,img2,img3,img4,img5,img6,img7,img8,img9]
+    return output_array
+
+def intro2():
+    img0 = 1000000000111110000000000000
+    img1 = 1000000001111111000000000000
+    img2 = 1000000011100011100000000000
+    img3 = 1000000111000001110000000000
+    img4 = 1000000000000011100000000000
+    img5 = 1000000000000111000000000000
+    img6 = 1000000111000011100000000000
+    img7 = 1000000011100001110000000000
+    img8 = 1000000001111111100000000000
+    img9 = 1000000000111111000000000000
+    output_array = [img0,img1,img2,img3,img4,img5,img6,img7,img8,img9]
+    return output_array
+
+def all_intro():
+
+
 def swap(output_array):
     inv = 1111111111111111111111111111
     for i in range(10):
-        
+
         output_array[i] = inv - output_array[i]
         #print(output_array[i])
         #time.sleep(0.5)
@@ -132,17 +183,17 @@ def on_release(key):
 
     try:
         if key.char in ['w','s','a','d']:
-            pressed_key[key.char] = False    
+            pressed_key[key.char] = False
 
     except:
         if key in [Key.alt, Key.cmd,Key.alt_r, Key.cmd_r]:
             pressed_key[key] = False
-        
+
         elif key == Key.shift:
             print('pressed shift')
             break_loop = True
             return False
-            
+
 
 def render(bullet_list, dead=False):
     global copy_array
@@ -180,7 +231,7 @@ def render(bullet_list, dead=False):
 
     for line in copy_array:
         print('{0:028d}'.format(line))
-    
+
     print('press left shift to exit, press right shift to restart')
 
 def create_bullet():
@@ -217,7 +268,7 @@ def check_dead():
         counter = 0
         while player_line > 0:
             if player_line % 10 != 0:
-                if (copy_array[verti + i]//(10 ** counter)) % (10) > 1:
+                if (copy_array[verti + i]//(10 ** counter)) % (10) > 3:
                     return True
             counter += 1
             player_line //= 10
@@ -237,8 +288,8 @@ def init():
     img7 = 0000000000000000000000000000
     img8 = 0000000000000000000000000000
     img9 = 0000000000000000000000000000
-    pos1 = 1100000000000000
-    pos2 = 1100000000000000
+    pos1 = 3300000000000000
+    pos2 = 3300000000000000
     verti = 4
 
     output_array = [img0,img1,img2,img3,img4,img5,img6,img7,img8,img9]
@@ -250,9 +301,10 @@ def init():
     dead = False
     array_copy = False
     break_loop = False
+    all_intro()
 
 with Listener(on_press=on_press, on_release=on_release) as listener:
-
+    init()
     while True:
 
         if break_loop:
@@ -261,7 +313,7 @@ with Listener(on_press=on_press, on_release=on_release) as listener:
         if dead:
             if not array_copy:
                 score = t // 10
-                copy_array = die()         
+                copy_array = die()
                 array_copy = True
             if (t % 10) == 0:
                 swap(copy_array)
@@ -277,6 +329,7 @@ with Listener(on_press=on_press, on_release=on_release) as listener:
 
         time.sleep(multiplier * 0.1)
         clear()
+        #print ("\n" * 50)
         t += 1
-    
+
     listener.join()
