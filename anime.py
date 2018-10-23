@@ -6,7 +6,7 @@ import sys
 import random
 import platform
 
-from pynput.keyboard import Key, Controller, Listener
+from recorded import recorded_input, recorded_bullet
 
 if platform.system() == 'Windows':
     def clear(): return os.system('cls')
@@ -14,8 +14,7 @@ elif platform.system() == 'Darwin':
     def clear(): return os.system('clear')
 
 # Global Variable
-pressed_button = ''
-pressed = ''
+
 L = 28
 
 img0 = 0000000000000000000000000000
@@ -39,18 +38,6 @@ copy_array = None
 
 t = 0
 
-pressed_key = {
-    'w': False,
-    's': False,
-    'a': False,
-    'd': False,
-    Key.alt: False,
-    Key.alt_r: False,
-    Key.cmd: False,
-    Key.cmd_r: False
-}
-
-init_bullet_list = []
 bullet_list = []
 dead = False
 array_copy = False
@@ -194,77 +181,26 @@ def set_zero():
     return [0 for _ in range(10)]
 
 
-def on_press(key):
-    global verti, pos1, pos2, pressed_key, restart, pressed, pressed_button
+def source_input(key):
+    global verti, pos1, pos2, pressed_key, restart
 
-    try:
-        pressed_button = key.char
-        if pressed_button == 'w':
-            pressed_key['w'] = True
+    if key == 'w':
 
-            verti = max(verti - 1, 0)
+        verti = max(verti - 1, 0)
 
-        elif pressed_button == 's':
-            pressed_key['s'] = True
+    elif key == 's':
 
-            verti = min(8, verti + 1)
+        verti = min(8, verti + 1)
 
-        elif pressed_button == 'd':
-            pressed_key['d'] = True
+    elif key == 'd':
 
-            pos1 = max(33, pos1 // 10)
-            pos2 = max(33, pos2 // 10)
+        pos1 = max(11, pos1 // 10)
+        pos2 = max(11, pos2 // 10)
 
-        elif pressed_button == 'a':
-            pressed_key['a'] = True
+    elif key == 'a':
 
-            pos1 = min(3300000000000000000000000000, pos1 * 10)
-            pos2 = min(3300000000000000000000000000, pos2 * 10)
-
-    except:
-
-        if key == Key.alt:
-            pressed_key[Key.alt] = True
-
-            verti = max(verti - 1, 0)
-
-        elif key == Key.cmd:
-            pressed_key[Key.cmd] = True
-
-            verti = min(8, verti + 1)
-
-        elif key == Key.alt_r:
-            pressed_key[Key.alt_r] = True
-
-            pos1 = max(33, pos1 // 10)
-            pos2 = max(33, pos2 // 10)
-
-        elif key == Key.cmd_r:
-            pressed_key[Key.cmd_r] = True
-
-            pos1 = min(3300000000000000000000000000, pos1 * 10)
-            pos2 = min(3300000000000000000000000000, pos2 * 10)
-
-        elif key == Key.shift_r:
-            restart = True
-
-
-def on_release(key):
-    global pressed_key, break_loop
-
-    try:
-        if key.char in ['w', 's', 'a', 'd']:
-            pressed_key[key.char] = False
-
-    except:
-        if key in [Key.alt, Key.cmd, Key.alt_r, Key.cmd_r]:
-            pressed_key[key] = False
-
-        elif key == Key.shift:
-            print('pressed shift')
-            break_loop = True
-            return False
-
+        pos1 = min(1100000000000000000000000000, pos1 * 10)
+        pos2 = min(1100000000000000000000000000, pos2 * 10)
 
 def render(bullet_list, dead=False):
     global copy_array
@@ -304,7 +240,6 @@ def render(bullet_list, dead=False):
 
 
 def create_bullet():
-    global init_bullet_list
     if random.random() > 0.5:
         # Horizontal Bullet
         tag = 'h'
@@ -330,7 +265,6 @@ def create_bullet():
         else:
             pos = 9
 
-    init_bullet_list.append([tag, val, dx, sign, pos, stack])
     return [tag, val, dx, sign, pos, stack]
 
 
@@ -376,10 +310,10 @@ def init():
     break_loop = False
     all_intro()
 
-
-with Listener(on_press=on_press, on_release=on_release) as listener:
+if __name__ == "__main__":
+    after_dead_count = 0
     while True:
-        pressed_button = ' '
+
         if break_loop:
             break
 
@@ -388,19 +322,23 @@ with Listener(on_press=on_press, on_release=on_release) as listener:
             restart = False
 
         if dead:
+            after_dead_count += 1
             if not array_copy:
                 score = t // 10
                 copy_array = die()
                 array_copy = True
+            if after_dead_count > 60:
+                break
             if (t % 10) == 0:
                 swap(copy_array)
             render(bullet_list, dead)
             print('Your Score: ', score)
 
         else:
+            source_input(recorded_input[t])
             print('Score: ', t // 10)
             if t % 7 == 0:
-                bullet_list.append(create_bullet())
+                bullet_list.append(recorded_bullet.pop(0))
             render(bullet_list)
             dead = check_dead()
 
@@ -408,8 +346,3 @@ with Listener(on_press=on_press, on_release=on_release) as listener:
         clear()
         #print ("\n" * 50)
         t += 1
-        pressed += pressed_button
-
-    listener.join()
-
-print(pressed, init_bullet_list)
