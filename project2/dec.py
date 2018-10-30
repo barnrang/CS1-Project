@@ -1,6 +1,12 @@
 '''
-T
+The following program display the repeating decimal of 1/n
+where n > 1. We pre-calculate the position where the repeatition start.
+Using list, set default -1, record the position for each remainder.
+If a remainder was assigned already, the assigned value is where the repeat
+decimal start.
 
+We re-run the loop again but print out the '(' at the repeating-start position
+if it is no repeating, then just print out normally.
 
 '''
 from time import sleep
